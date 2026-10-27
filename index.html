@@ -3,9 +3,136 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="refresh" content="0; url=./chuyen-mon.html">
 <title>Sứ giả Mặt Trời</title>
-<script>location.replace('./chuyen-mon.html'+location.hash)</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#fff;overflow:hidden;
+ background:radial-gradient(circle at 50% 20%,#ffb703 0,#fb8500 18%,#7a3b12 55%,#2b1608 100%);
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:16px}
+.sparks i{position:fixed;bottom:-20px;width:8px;height:8px;border-radius:50%;background:#ffe066;
+ box-shadow:0 0 12px 4px rgba(255,224,102,.7);animation:rise linear infinite;opacity:0}
+@keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:.9}100%{transform:translateY(-110vh) translateX(40px);opacity:0}}
+h1{font-size:clamp(1.6rem,5vw,2.6rem);text-align:center;text-shadow:0 3px 12px rgba(0,0,0,.4);animation:down .9s both}
+h1 small{display:block;font-size:.4em;font-weight:400;opacity:.85;letter-spacing:3px;margin-top:4px}
+@keyframes down{from{opacity:0;transform:translateY(-24px)}to{opacity:1;transform:none}}
+.guide{display:flex;flex-direction:column;align-items:center;animation:pop .9s .3s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.3) translateY(60px)}to{opacity:1;transform:none}}
+.bubble{position:relative;background:#fff;color:#4a2a0a;padding:12px 18px;border-radius:18px;max-width:min(340px,88vw);
+ text-align:center;font-weight:600;line-height:1.4;min-height:50px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-12px;margin-left:-12px;border:12px solid transparent;border-top-color:#fff;border-bottom:0}
+#boy{width:clamp(110px,22vh,170px);margin-top:16px;filter:drop-shadow(0 0 0 #fff) drop-shadow(0 8px 14px rgba(0,0,0,.4));
+ animation:float 3s ease-in-out infinite;transition:transform .25s}
+#boy.swap{transform:scale(.8) rotate(-6deg)}
+@keyframes float{50%{transform:translateY(-10px)}}
+.menu{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.btn{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:150px;padding:14px 22px;cursor:pointer;
+ font:inherit;font-weight:700;font-size:1.05rem;color:#fff;border-radius:18px;border:1px solid rgba(255,255,255,.45);
+ background:rgba(255,255,255,.14);backdrop-filter:blur(8px);transition:transform .25s,background .25s,box-shadow .25s;
+ opacity:0;animation:up .7s forwards}
+.btn:nth-child(1){animation-delay:.9s}.btn:nth-child(2){animation-delay:1.1s}.btn:nth-child(3){animation-delay:1.3s}
+@keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.btn .ic{font-size:2rem}
+.btn:hover,.btn:focus-visible{transform:translateY(-6px) scale(1.07);background:rgba(255,255,255,.28);box-shadow:0 12px 28px rgba(0,0,0,.4),0 0 22px rgba(255,214,10,.6);outline:0}
+
+/* ===== Cảnh chuyển trang ===== */
+#scene{position:fixed;inset:0;z-index:50;pointer-events:none;visibility:hidden;clip-path:circle(0 at 50% 50%);
+ background:#000;overflow:hidden;transition:clip-path 1s cubic-bezier(.6,0,.2,1)}
+#scene.on{visibility:visible;pointer-events:auto}
+#scene.open{clip-path:circle(150vmax at var(--x) var(--y))}
+#scene .bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:blur(22px) brightness(.7)}
+#scene .pic{position:absolute;left:50%;top:50%;height:88vh;max-width:94vw;object-fit:contain;border-radius:20px;
+ box-shadow:0 20px 60px rgba(0,0,0,.6);transform:translate(-50%,-50%) scale(1.25);opacity:0;
+ transition:transform 2.2s ease-out,opacity .8s .5s}
+#scene.open .pic{transform:translate(-50%,-50%) scale(1);opacity:1;animation:bob 2.6s 1.5s ease-in-out infinite}
+@keyframes bob{50%{margin-top:-8px}}
+#scene .cap{position:absolute;left:0;right:0;bottom:6vh;text-align:center;font-size:clamp(1.3rem,4vw,2.2rem);font-weight:800;
+ text-shadow:0 3px 14px #000;opacity:0;transition:opacity .6s 1s}
+#scene.open .cap{opacity:1}
+#scene.fade{opacity:0;transition:opacity .45s}
+#fly{position:fixed;z-index:60;width:90px;left:0;top:0;pointer-events:none;display:none;filter:drop-shadow(0 0 10px #ffe066)}
+#fly.go{display:block;animation:fly 1s cubic-bezier(.5,0,.8,.4) forwards}
+@keyframes fly{
+ 0%{transform:translate(var(--sx),var(--sy)) scale(1) rotate(0)}
+ 25%{transform:translate(var(--sx),calc(var(--sy) - 40px)) scale(1.2) rotate(-12deg)}
+ 100%{transform:translate(110vw,-30vh) scale(.3) rotate(40deg)}}
+</style>
 </head>
-<body><p><a href="./chuyen-mon.html">Vào trang ôn tập</a></p></body>
+<body>
+<div class="sparks" id="sparks"></div>
+<h1>Sứ giả Mặt Trời<small>CHỌN HÀNH TRÌNH ÔN TẬP</small></h1>
+
+<div class="guide">
+  <div class="bubble" id="say"></div>
+  <img id="boy" src="be-xin-chao.png" alt="Cậu bé hướng dẫn">
+</div>
+
+<div class="menu">
+  <button class="btn" data-k="nghi-quyet"><span class="ic">🧭</span>Nghị quyết</button>
+  <button class="btn" data-k="chuyen-mon"><span class="ic">📐</span>Chuyên môn</button>
+  <button class="btn" data-k="tai-lieu"><span class="ic">📑</span>Tài liệu ôn tập</button>
+</div>
+
+<div id="scene"><div class="bg"></div><img class="pic" alt=""><div class="cap"></div></div>
+<img id="fly" src="be-co-vu.png" alt="">
+
+<script>
+/* ===== Cấu hình: sửa tên file ở đây nếu khác ===== */
+const TOPICS = {
+  'nghi-quyet': {url:'nghi-quyet.html', img:'anh-nghi-quyet.jpg', face:'be-co-vu.png',
+    hover:'Ra khơi cùng mình nhé! ⛵', cap:'Giương buồm ra khơi… ⛵'},
+  'chuyen-mon': {url:'chuyen-mon.html', img:'anh-chuyen-mon.jpg', face:'be-tu-hao.png',
+    hover:'Cầm bản vẽ vào phòng thiết kế nào! 📐', cap:'Mở bản vẽ, vào việc thôi… 💻'},
+  'tai-lieu':   {url:'tai-lieu-on-tap.html', img:'anh-tai-lieu.jpg', face:'be-thac-mac.png',
+    hover:'Cầm đèn hoa hướng dương vào thư viện! 🌻', cap:'Bước vào thư viện… 🌻'}
+};
+
+/* hạt sáng */
+const sp=document.getElementById('sparks');
+for(let i=0;i<26;i++){const e=document.createElement('i');
+  e.style.left=Math.random()*100+'%';e.style.animationDuration=(6+Math.random()*8)+'s';
+  e.style.animationDelay=(-Math.random()*10)+'s';e.style.transform='scale('+(.5+Math.random()*1.2)+')';sp.appendChild(e)}
+
+/* lời thoại gõ chữ */
+const say=document.getElementById('say'),boy=document.getElementById('boy');let tm;
+function type(t){clearTimeout(tm);say.textContent='';let i=0;
+  (function n(){if(i<t.length){say.textContent+=t[i++];tm=setTimeout(n,25)}})()}
+function face(src){boy.classList.add('swap');setTimeout(()=>{boy.src=src;boy.classList.remove('swap')},120)}
+const HELLO='Chào bạn! 👋 Mình là Sứ giả Mặt Trời. Hôm nay bạn muốn ôn phần nào?';
+setTimeout(()=>type(HELLO),1000);
+
+document.querySelectorAll('.btn').forEach(b=>{
+  const t=TOPICS[b.dataset.k];
+  const over=()=>{face(t.face);type(t.hover)};
+  const out=()=>{face('be-xin-chao.png');type(HELLO)};
+  b.addEventListener('mouseenter',over);b.addEventListener('focus',over);
+  b.addEventListener('mouseleave',out);
+  b.addEventListener('click',e=>go(b,t,e));
+});
+
+/* biến hoá + bay vút + chuyển cảnh */
+let busy=false;
+function go(btn,t){
+  if(busy)return;busy=true;
+  const r=btn.getBoundingClientRect(),b=boy.getBoundingClientRect();
+  const x=r.left+r.width/2,y=r.top+r.height/2;
+  const fly=document.getElementById('fly');
+  fly.src=t.face;
+  fly.style.setProperty('--sx',(b.left+b.width/2-45)+'px');
+  fly.style.setProperty('--sy',(b.top+b.height/2-45)+'px');
+  boy.style.visibility='hidden';say.textContent='Đi thôi! 🚀';
+  fly.classList.add('go');
+  const sc=document.getElementById('scene');
+  sc.querySelector('.pic').src=t.img;
+  sc.querySelector('.bg').style.backgroundImage="url('"+t.img+"')";
+  sc.querySelector('.cap').textContent=t.cap;
+  sc.style.setProperty('--x',x+'px');sc.style.setProperty('--y',y+'px');
+  setTimeout(()=>{sc.classList.add('on');requestAnimationFrame(()=>requestAnimationFrame(()=>sc.classList.add('open')))},550);
+  setTimeout(()=>sc.classList.add('fade'),3100);
+  setTimeout(()=>{location.href=t.url},3500);
+}
+/* quay lại bằng nút Back thì reset */
+addEventListener('pageshow',e=>{if(e.persisted)location.reload()});
+</script>
+</body>
 </html>
