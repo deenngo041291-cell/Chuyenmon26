@@ -258,6 +258,8 @@ const ld=(k,d)=>{try{const r=localStorage.getItem(k);if(r!==null)return JSON.par
 let bank=ld('kts_bank5',null);
 if(!Array.isArray(bank)){bank=SAMPLE.map(x=>({q:x[0],o:x[1],a:x[2],e:x[3],c:x[4],ns:x[5],s:x[6],d:x[7]}));sv('kts_bank5',bank);}
 const saveBank=()=>sv('kts_bank5',bank);
+// Bổ sung 1 lần các câu mới (từ câu thứ 386) vào bộ đã lưu trong trình duyệt, không đụng câu cũ
+if(!ld('kts_added_1',false)){SAMPLE.slice(385).forEach(x=>{if(!bank.some(b=>b.q===x[0]))bank.push({q:x[0],o:x[1],a:x[2],e:x[3],c:x[4],ns:x[5],s:x[6],d:x[7]})});saveBank();sv('kts_added_1',true)}
 let set=Object.assign({timer:false,snd:true,music:true},ld('kts_set',{})),bestScore=ld('kts_best',0);
 $('#optTimer').checked=set.timer;$('#optSnd').checked=set.snd;$('#optMus').checked=set.music;
 $('#optTimer').onchange=$('#optSnd').onchange=()=>{set.timer=$('#optTimer').checked;set.snd=$('#optSnd').checked;sv('kts_set',set)};
