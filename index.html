@@ -27,8 +27,7 @@ h1 small{display:block;font-size:.4em;font-weight:400;opacity:.85;letter-spacing
 .bubble{position:relative;background:#fff;color:#4a2a0a;padding:12px 18px;border-radius:18px;max-width:min(340px,88vw);
  text-align:center;font-weight:600;line-height:1.4;min-height:50px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
 .bubble::after{content:"";position:absolute;left:50%;bottom:-12px;margin-left:-12px;border:12px solid transparent;border-top-color:#fff;border-bottom:0}
-#boy{background:#fff;border-radius:28px;padding:6px;border:4px solid #ffd60a;box-shadow:0 0 0 4px rgba(255,255,255,.35),0 10px 24px rgba(0,0,0,.4);
- width:clamp(110px,22vh,170px);margin-top:16px;cursor:pointer;animation:float 3s ease-in-out infinite;transition:transform .25s}
+#boy{height:clamp(170px,33vh,280px);width:auto;margin-top:16px;cursor:pointer;filter:drop-shadow(0 8px 14px rgba(0,0,0,.45));animation:float 3s ease-in-out infinite;transition:transform .25s}
 #boy.swap{transform:scale(.8) rotate(-6deg)}
 @keyframes float{50%{transform:translateY(-10px)}}
 .menu{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
@@ -55,7 +54,7 @@ h1 small{display:block;font-size:.4em;font-weight:400;opacity:.85;letter-spacing
 
 <div class="guide">
   <div class="bubble" id="say"></div>
-  <img id="boy" src="be-xin-chao.png" alt="Cậu bé hướng dẫn">
+  <img id="boy" src="be-chao.webp" alt="Cậu bé hướng dẫn">
 </div>
 
 <div class="menu">
@@ -68,7 +67,7 @@ h1 small{display:block;font-size:.4em;font-weight:400;opacity:.85;letter-spacing
 <script>
 var SQ=window.SQ||{T:{},hello:function(){return 'Chào bạn! Hôm nay bạn muốn ôn phần nào?'}},T=SQ.T;
 /* tải sẵn ảnh để chuyển cảnh không bị khựng */
-Object.keys(T).forEach(function(k){[T[k].img,T[k].face,'be-xin-chao.png'].forEach(function(u){var i=new Image();i.src=u;if(i.decode)i.decode().catch(function(){})})});
+Object.keys(T).forEach(function(k){[T[k].img,T[k].face,'be-chao.webp','be-bay.webp','be-ngac-nhien.webp','be-moi.webp'].forEach(function(u){var i=new Image();i.src=u;if(i.decode)i.decode().catch(function(){})})});
 /* hạt sáng */
 var sp=document.getElementById('sparks');
 for(var i=0;i<14;i++){var e=document.createElement('i');
@@ -79,12 +78,12 @@ var say=document.getElementById('say'),boy=document.getElementById('boy'),tm;
 function type(t){clearTimeout(tm);say.textContent='';var i=0;(function n(){if(i<t.length){say.textContent+=t[i++];tm=setTimeout(n,25)}})()}
 function face(s){boy.classList.add('swap');setTimeout(function(){boy.src=s;boy.classList.remove('swap')},120)}
 var HELLO=SQ.hello();setTimeout(function(){type(HELLO)},1000);
-var JOKES=['Ôn bài đi nào, mình đứng đây cổ vũ! 💪','Mỗi ngày vài câu thôi là đủ giỏi rồi 😎','Bấm thử vào mình xem 😜'];
-boy.onclick=function(){face('be-co-vu.png');type(JOKES[Math.random()*JOKES.length|0]);setTimeout(function(){face('be-xin-chao.png')},2500)};
+var JOKES=[['be-bay.webp','Ôn bài đi nào, mình đứng đây cổ vũ! 💪'],['be-ngac-nhien.webp','Ơ, bấm mình làm gì thế? 😲'],['be-moi.webp','Mời bạn chọn một hành trình bên dưới nhé!']];
+boy.onclick=function(){var j=JOKES[Math.random()*JOKES.length|0];face(j[0]);type(j[1]);setTimeout(function(){face('be-chao.webp')},2800)};
 document.querySelectorAll('.btn').forEach(function(b){
   var k=b.dataset.k,t=T[k]||{};
   function over(){document.body.dataset.h=k;if(t.face){face(t.face);type(t.hov)}}
-  function out(){delete document.body.dataset.h;face('be-xin-chao.png');type(HELLO)}
+  function out(){delete document.body.dataset.h;face('be-chao.webp');type(HELLO)}
   b.addEventListener('mouseenter',over);b.addEventListener('focus',over);b.addEventListener('mouseleave',out);
   b.addEventListener('click',function(){
     if(window.SQ){document.body.dataset.h=k;say.textContent='Đi thôi! 🚀';SQ.go(k,boy,true)}else location.href=b.dataset.u;
