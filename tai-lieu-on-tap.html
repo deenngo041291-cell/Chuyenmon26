@@ -592,7 +592,7 @@ function build(){
    const path=[];let p=el.parentElement;
    while(p&&p!==root){if(p.tagName==='DETAILS'&&p.querySelector(':scope>summary'))path.unshift(SUM(p).slice(0,80));p=p.parentElement}
    if(!path.length){if(h2)path.push(h2);if(h3)path.push(h3)}
-   const kind=el.classList.contains('st')?'stat':'';IDX.push({v,el,t,path,kind,tk:N(t+' '+path.join(' ')).split(' ').filter(Boolean)});
+   const kind=el.classList.contains('st')?'stat':el.tagName==='TR'?'row':'';IDX.push({v,el,t,path,kind,tk:N(t+' '+path.join(' ')).split(' ').filter(Boolean)});
   });
  }
  DF={};IDX.forEach(c=>{c.tf={};c.tk.forEach(w=>c.tf[w]=(c.tf[w]||0)+1);Object.keys(c.tf).forEach(w=>DF[w]=(DF[w]||0)+1)});
@@ -606,7 +606,7 @@ function search(q,kind){
   qt.forEach(w=>{const f=c.tf[w];if(f){hit++;const idf=Math.log(1+(M-DF[w]+.5)/(DF[w]+.5));s+=idf*f*2.2/(f+1.2*(.25+.75*c.tk.length/avg))}});
   if(!hit)return;
   const nt=' '+c.tk.join(' ')+' ';bg.forEach(b=>{if(nt.includes(' '+b+' '))s+=2});
-  s*=.5+hit/qt.length;res.push({c,s,r:hit/qt.length})});
+  s*=(.5+hit/qt.length)*(1+Math.min(c.t.length,220)/440);if(c.kind==='row')s*=.8;res.push({c,s,r:hit/qt.length})});
  res.sort((a,b)=>b.s-a.s);
  const seen=new Set(),out=[];
  for(const r of res){const k=N(r.c.t);if(seen.has(k))continue;seen.add(k);out.push(r);if(out.length>=5)break}
@@ -679,7 +679,7 @@ const CSS2=`#ast{--ab:#1f1b33;--ab2:#2f2a50;--at:#fff1d6;--am:#cdbf9f;--al:#4d47
 .qs blockquote{margin:4px 0 6px;padding:8px 12px;border-left:5px solid var(--gold);background:var(--ab2);border-radius:0 12px 12px 0;font-size:14.5px;line-height:1.5}`;
 const st=document.createElement('style');st.textContent=css+CSS2;document.head.appendChild(st);
 const w=document.createElement('div');w.id='ast';
-w.innerHTML='<div id="astQ" hidden><div class="qbox"><div class="qh"><b>📚 Nguồn trích dẫn</b><button type="button" id="astQX" aria-label="Đóng">✕</button></div><div id="astQB"></div></div></div><section id="astP" hidden><header><img id="astAv" src="'+FACE.hi+'" alt=""><div><b>Trợ lý ôn tập</b><small>Tra cứu trong NQ126 · Cây ghi chú · Ma trận · Quy chế chung</small></div><button type="button" id="astX" aria-label="Đóng">✕</button></header><div id="astM"></div><div id="astC"></div><form id="astF" autocomplete="off"><input id="astI" placeholder="Gõ câu hỏi, vd: L1 gồm những hành vi nào?"><button>Gửi</button></form></section><button type="button" id="astFab"><img src="'+FACE.hi+'" alt=""><span>Hỏi trợ lý</span></button>';
+w.innerHTML='<div id="astQ" hidden><div class="qbox"><div class="qh"><b>📚 Nguồn trích dẫn</b><button type="button" id="astQX" aria-label="Đóng">✕</button></div><div id="astQB"></div></div></div><section id="astP" hidden><header><img id="astAv" src="'+FACE.hi+'" alt=""><div><b>Trợ lý ôn tập</b><small>Tra cứu trong NQ126 · Cây ghi chú · Ma trận · Quy chế chung</small></div><button type="button" id="astX" aria-label="Đóng">✕</button></header><div id="astM"></div><div id="astC"></div><form id="astF" autocomplete="off"><input id="astI" placeholder="Gõ câu hỏi, vd: L1 gồm những hành vi nào?"><button type="button" id="astS">Gửi</button></form></section><button type="button" id="astFab"><img src="'+FACE.hi+'" alt=""><span>Hỏi trợ lý</span></button>';
 document.body.appendChild(w);
 const P=$('astP'),M=$('astM');
 function say(who,html,mood,src,qt){const d=document.createElement('div');d.className='am '+who;d.innerHTML=(who==='bot'?'<img src="'+FACE[mood||'ok']+'" alt="">':'')+'<div class="b">'+html+(src&&src.length?'<div class="ar">'+srcBtn(src,qt)+'</div>':'')+'</div>';M.appendChild(d);M.scrollTop=M.scrollHeight;if(who==='bot')$('astAv').src=FACE[mood||'ok']}
@@ -702,8 +702,10 @@ function ask(q){
 }
 function onClk(e){const b=e.target.closest('[data-s]');if(b){$('astQB').innerHTML=SR[+b.dataset.s];$('astQ').hidden=false;return}const j=e.target.closest('[data-j]');if(j){const h=HITS[+j.dataset.j];if(h){$('astQ').hidden=true;jump(h.el,h.v)}}}
 M.addEventListener('click',onClk);$('astQ').addEventListener('click',e=>{if(e.target===$('astQ')||e.target.closest('#astQX'))$('astQ').hidden=true;else onClk(e)});
-['L1 gồm những hành vi vi phạm nào?','Mật khẩu tối thiểu bao nhiêu ký tự?','Chương 4 có mấy nhiệm vụ trọng tâm?','Thời hiệu xử lý kỷ luật lao động?','Ai phê duyệt chọn nhà thầu xây lắp trên 20 tỷ?'].forEach(q=>{const b=document.createElement('button');b.type='button';b.textContent=q;b.onclick=()=>ask(q);$('astC').appendChild(b)});
-$('astF').onsubmit=e=>{e.preventDefault();const i=$('astI');const q=i.value;i.value='';ask(q)};
+['L1 gồm những hành vi vi phạm nào?','Mật khẩu tối thiểu bao nhiêu ký tự?','Chương 4 có mấy nhiệm vụ trọng tâm?','Thời hiệu xử lý kỷ luật lao động?','Ai phê duyệt chọn nhà thầu xây lắp trên 20 tỷ?'].forEach(q=>{const b=document.createElement('button');b.type='button';b.textContent=q;b.onclick=()=>{$('astI').value=q;send()};$('astC').appendChild(b)});
+function send(){const i=$('astI'),q=i.value;if(!q.trim())return;i.value='';try{ask(q)}catch(err){say('bot','Có lỗi khi tra cứu: '+esc(String(err&&err.message||err)),'none')}}
+$('astF').onsubmit=e=>{e.preventDefault();send()};$('astS').onclick=send;
+$('astI').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){e.preventDefault();send()}});
 let first=true;
 function toggle(){P.hidden=!P.hidden;if(!P.hidden){if(first){first=false;say('bot','Chào bạn! Mình là trợ lý ôn tập. Hỏi gì cũng được, mình sẽ lục trong 4 tab tài liệu rồi chỉ chỗ cho bạn mở xem ngay. Mình trả lời ngắn gọn dựa trên tài liệu, bấm “Nguồn” để xem đoạn trích gốc.<br><small>Thử hỏi: “L1 gồm những hành vi vi phạm nào?” hoặc “hành vi số 7”.</small>','hi')}$('astI').focus()}}
 $('astFab').onclick=toggle;$('astX').onclick=()=>{P.hidden=true};
