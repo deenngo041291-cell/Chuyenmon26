@@ -173,6 +173,24 @@ main{padding-top:58px!important}
 .ckact,.ckbn{justify-content:center}
 .ckbn button.on{background:#ffb300;color:#3b2410;border-color:#ffb300}
 </style>
+<style id="cl-css">
+#clTrack{margin:2px 0 8px}
+.clRow{display:flex;justify-content:space-between;font-weight:700;font-size:14px}
+.clMt{position:relative;height:46px;margin:8px 12px 4px;background:linear-gradient(to top right,transparent calc(50% - 1.5px),var(--line) 50%,transparent calc(50% + 1.5px))}
+.clMan{position:absolute;font-size:24px;line-height:1;transition:left .6s,bottom .6s;transform:translate(-50%,0)}
+.clPeak{position:absolute;right:-8px;top:-8px;font-size:26px;line-height:1}
+.clSc{width:100%;max-width:360px;display:block;margin:6px auto;border-radius:16px}
+.clq{text-align:center;font-weight:700;margin:6px 0}
+.clRec{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-weight:700;font-size:14px;margin:6px 0}
+.clRec span{padding:4px 10px;border-radius:999px;background:var(--card);border:2px solid var(--line)}
+.clTb{display:flex;flex-direction:column;gap:4px;margin:8px 0}
+.clR{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:12px;background:var(--card);border:2px solid var(--line);font-weight:600;font-size:15px}
+.clR.me{border-color:#ffb300;background:rgba(255,179,0,.15)}
+.clR .rk{min-width:30px;text-align:center;font-weight:800}
+.clR .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.clR .sc{font-weight:800}
+.clR .tm{color:var(--mut);font-size:13px}
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="sf" viewBox="0 0 100 100"><g fill="#ffb300" stroke="#e65100" stroke-width="1.5"><ellipse cx="50" cy="19" rx="9" ry="18"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(30 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(60 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(90 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(120 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(150 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(180 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(210 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(240 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(270 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(300 50 50)"/><ellipse cx="50" cy="19" rx="9" ry="18" transform="rotate(330 50 50)"/></g><g fill="#ffd54a"><ellipse cx="50" cy="24" rx="7" ry="13" transform="rotate(15 50 50)"/><ellipse cx="50" cy="24" rx="7" ry="13" transform="rotate(75 50 50)"/><ellipse cx="50" cy="24" rx="7" ry="13" transform="rotate(135 50 50)"/><ellipse cx="50" cy="24" rx="7" ry="13" transform="rotate(195 50 50)"/><ellipse cx="50" cy="24" rx="7" ry="13" transform="rotate(255 50 50)"/><ellipse cx="50" cy="24" rx="7" ry="13" transform="rotate(315 50 50)"/></g><circle cx="50" cy="50" r="19" fill="#5d3310"/><circle cx="50" cy="50" r="12" fill="#7b4a1b"/><circle cx="45" cy="46" r="2" fill="#a8742f"/><circle cx="55" cy="47" r="2" fill="#a8742f"/><circle cx="50" cy="55" r="2" fill="#a8742f"/></symbol></defs></svg>
@@ -192,9 +210,9 @@ main{padding-top:58px!important}
   <label class="chk" style="justify-content:center"><input type="checkbox" id="optTimer"> ⏱ Đếm ngược 30 giây mỗi câu</label>
   <label class="chk" style="justify-content:center"><input type="checkbox" id="optSnd"> 🔔 Âm thanh</label>
   <label class="chk" style="justify-content:center"><input type="checkbox" id="optMus"> 🎵 Nhạc nền</label>
-  <div class="row"><button id="bOn" style="font-size:20px;padding:14px 30px">📖 ÔN</button><button id="bThi" style="font-size:20px;padding:14px 30px">📝 THI</button></div>
+  <div class="row"><button id="bOn" style="font-size:20px;padding:14px 30px">📖 ÔN</button><button id="bThi" style="font-size:20px;padding:14px 30px">📝 THI</button><button id="bClimb" style="font-size:20px;padding:14px 30px">⛰️ LEO NÚI</button></div>
   <div class="row"><button id="bMus">🎧 NGHE NHẠC</button><button class="sec" id="bLib">📚 Thư viện câu hỏi</button></div>
-  <p class="mut" id="best"></p>
+  <p class="mut" id="best"></p><p class="mut" id="climbTop"></p>
  </section>
 
  <section id="quiz" class="card hide"></section>
@@ -362,7 +380,7 @@ const THI=[['nq',14],['nvtt',12],['ktc',8],['qd',6]],THI_N=40;
 function infoUpd(){const n=pool().length;$('#info').innerHTML='📖 <b>ÔN</b>: mục đang chọn có <b>'+n+'</b> câu, đánh toàn bộ (tổng kho '+bank.length+' câu)<br>📝 <b>THI</b>: mỗi lượt '+THI_N+' câu = '+THI.map(g=>g[1]+' '+CATS[g[0]].split(' (')[0]).join(' • ')+'; xáo trộn mỗi lần, không xáo đáp án'+(n>100?'<br>📚 Mục này trên 100 câu: bấm ÔN để chọn <b>bộ tổng</b> hoặc <b>bộ chia</b> (mỗi bộ tối đa 50 câu)':'');$('#bOn').disabled=!n;$('#bThi').disabled=!bank.length}
 function fillHome(){const s=$('#catSel');let h='<option value="all">Tất cả các mục ('+bank.length+' câu)</option>';Object.keys(CATS).forEach(k=>{const n=bank.filter(b=>catOf(b)===k).length;if(n)h+=`<option value="${k}">${CATS[k]} (${n} câu)</option>`});const ts=[...new Set(bank.map(b=>b.t).filter(Boolean))];if(ts.length)h+='<optgroup label="Chi tiết theo chuyên đề">'+ts.map(t=>`<option value="t:${esc(t)}">${esc(t)} (${bank.filter(b=>b.t===t).length} câu)</option>`).join('')+'</optgroup>';s.innerHTML=h;s.value=[...s.options].some(o=>o.value===set.cat)?set.cat:'all';infoUpd()}
 $('#catSel').onchange=()=>{set.cat=$('#catSel').value;sv('sq_set',set);infoUpd()};
-function home(){fillHome();$('#best').textContent=bestScore?'🏆 Điểm THI cao nhất: '+bestScore+'/'+THI_N:'';show('home');say(bank.length?'XIN CHÀO, XIN MỜI LÊN THUYỀN. RA KHƠIII !!!!':'Kho trống rồi, vào Thư viện thêm câu hỏi nhé!',bank.length?'cheer':'confused')}
+function home(){fillHome();$('#best').textContent=bestScore?'🏆 Điểm THI cao nhất: '+bestScore+'/'+THI_N:'';climbHome();show('home');say(bank.length?'XIN CHÀO, XIN MỜI LÊN THUYỀN. RA KHƠIII !!!!':'Kho trống rồi, vào Thư viện thêm câu hỏi nhé!',bank.length?'cheer':'confused')}
 /* QUIZ */
 let Q,i,score,streak,maxStreak,wrong,locked,tl,tmr,wr=0,qmode='on';
 const mkQ=(b,sh)=>{const idx=(b.ns||!sh)?b.o.map((_,k)=>k):shuf(b.o.map((_,k)=>k));return{q:b.q,o:idx.map(k=>b.o[k]),a:idx.indexOf(b.a),e:b.e,r:b}};
@@ -371,24 +389,24 @@ function draw(k,n){const all=bank.filter(b=>catOf(b)===k),out=[];let bag=(BAGS[k
 function redoWrong(){const L=wrong.map(w=>w.r).filter(Boolean);if(!L.length)return;syncMusic();qmode='on';ckLab='🔁 Ôn lại câu sai';Q=shuf(L).map(b=>mkQ(b,true));i=0;wr=0;score=0;streak=0;maxStreak=0;wrong=[];ckInit();show('quiz');say(R(M_START),'cheer');render()}
 const RV=["Sai rồi mà bỏ qua là mai thi sai tiếp đó nha!","Làm lại cho nhớ, kẻo vô phòng thi lại lú 😵","Đừng để câu sai này theo mày vô phòng thi 👻","Ôn xong là thuộc, thuộc xong là đậu! 💪"];
 function reviewPopup(){const n=wrong.length;if(!n)return;const f=FACES.angry||FACES.scorn||FACES.worry;modal(`<div class="rvM"><img src="${f}" alt=""><h2>Ôn lại kẻo ôn lộn! 😤</h2><p><b>${n} câu</b> sai kìa. ${R(RV)}</p><div class="row"><button id="rvGo">💪 Ôn ngay ${n} câu</button><button class="sec" id="cx">Để sau</button></div></div>`);$("#cx").onclick=close;$("#rvGo").onclick=()=>{close();redoWrong()}}
-function begin(m,L,lab){lastL=L||null;lastLab=lab||'';ckLab=lab||(m==='thi'?'📝 THI':'📖 ÔN');syncMusic();qmode=m;Q=m==='thi'?shuf([].concat(...THI.map(g=>draw(g[0],g[1])))).map(b=>mkQ(b,false)):shuf(L||pool()).map(b=>mkQ(b,true));if(!Q.length)return;i=0;wr=0;score=0;streak=0;maxStreak=0;wrong=[];ckInit();show('quiz');say(R(M_START),'cheer');render()}
-$('#bOn').onclick=onChoose;$('#bThi').onclick=()=>begin('thi');
+function begin(m,L,lab){if(m==='climb')climbT0=Date.now();lastL=L||null;lastLab=lab||'';ckLab=lab||(m==='thi'?'📝 THI':m==='climb'?'⛰️ LEO NÚI · '+climbName:'📖 ÔN');syncMusic();qmode=m;Q=(m==='thi'||m==='climb')?shuf([].concat(...THI.map(g=>draw(g[0],g[1])))).map(b=>mkQ(b,false)):shuf(L||pool()).map(b=>mkQ(b,true));if(!Q.length)return;i=0;wr=0;score=0;streak=0;maxStreak=0;wrong=[];ckInit();show('quiz');say(R(M_START),'cheer');render()}
+$('#bOn').onclick=onChoose;$('#bThi').onclick=()=>begin('thi');$('#bClimb').onclick=climbStart;
 function render(){clearInterval(tmr);locked=false;if(i>0)say(R(M_THINK),'think');const c=Q[i];const L='ABCD';
-const M=$('.mascot');document.body.appendChild(M);M.classList.remove('inline');$('#quiz').innerHTML=`<div class="hud"><button type="button" class="sm sec" id="qBack">🏠 Trang chủ</button><span>${qmode==='thi'?'📝 THI':'📖 ÔN'} • Câu ${i+1}/${Q.length}</span><span id="tm"></span><span class="scr"><svg class="sf hud-sf" viewBox="0 0 100 100"><use href="#sf"/></svg><b id="scv">${score}</b> &nbsp; 🔥 <b id="stv">${streak}</b></span></div><div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div id="mSlot"></div><div class="q" style="white-space:pre-line;font-size:${c.q.length>180?17:21}px">${esc(c.q)}</div><div id="opts">${c.o.map((t,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span>${esc(t)}</button>`).join('')}</div><div id="fb"></div>`;
+const M=$('.mascot');document.body.appendChild(M);M.classList.remove('inline');$('#quiz').innerHTML=`<div class="hud"><button type="button" class="sm sec" id="qBack">🏠 Trang chủ</button><span>${qmode==='thi'?'📝 THI':qmode==='climb'?'⛰️ LEO NÚI':'📖 ÔN'} • Câu ${i+1}/${Q.length}</span><span id="tm"></span><span class="scr"><svg class="sf hud-sf" viewBox="0 0 100 100"><use href="#sf"/></svg><b id="scv">${score}</b> &nbsp; 🔥 <b id="stv">${streak}</b></span></div><div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div id="mSlot"></div><div class="q" style="white-space:pre-line;font-size:${c.q.length>180?17:21}px">${esc(c.q)}</div><div id="opts">${c.o.map((t,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span>${esc(t)}</button>`).join('')}</div><div id="fb"></div>`;
 M.classList.add('inline');$('#mSlot').appendChild(M);
 document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(+b.dataset.k));
 $('#qBack').onclick=()=>{if(confirm('Thoát bài đang làm và về trang chủ?')){clearInterval(tmr);home()}};
-if(set.timer&&ans[i]===undefined){tl=30;tick();tmr=setInterval(()=>{tl--;tick();if(tl<=0){clearInterval(tmr);pick(-1)}},1000)}ckAfterRender()}
+if(set.timer&&ans[i]===undefined){tl=30;tick();tmr=setInterval(()=>{tl--;tick();if(tl<=0){clearInterval(tmr);pick(-1)}},1000)}ckAfterRender();climbTrack()}
 function tick(){$('#tm').textContent='⏱ '+tl+'s';if(tl===5&&!locked)say(R(M_WORRY),'worry')}
 function pick(k){if(locked)return;locked=true;clearInterval(tmr);const c=Q[i],ok=k===c.a;ans[i]=k;
 document.querySelectorAll('.opt').forEach((b,n)=>{b.disabled=true;if(n===c.a)b.classList.add('ok');else if(n===k)b.classList.add('bad')});
 if(ok){score++;streak++;wr=0;scoreUi();burst(1);maxStreak=Math.max(maxStreak,streak);bling(streak);const f=streak>=5?'joy':streak===4?'grin':streak===3?'proud':'smile';say(streak>=5?R(M_S5).replace('{n}',streak):streak===4?R(M_S4):streak===3?R(M_S3):R(M_OK),f,'happy')}
 else{streak=0;wr++;scoreUi();wrong.push({r:c.r,q:c.q,a:c.o[c.a],y:k<0?'(hết giờ)':c.o[k]});beep(200,.3);k<0?say(R(M_TO),'tired','sad'):wr>=3?say(R(M_W3).replace('{n}',wr),'angry','sad'):wr===2?say(R(M_W2),'regret','sad'):say(R(M_BAD),'scorn','sad')}
-ckFb(c);ckPill()}
-function finish(){const p=Math.round(score/Q.length*100);if(qmode==='thi'&&score>bestScore){bestScore=score;sv('sq_nq_best_thi',score)}
+ckFb(c);ckPill();climbTrack()}
+function finish(){const p=Math.round(score/Q.length*100);if(qmode==='thi'&&score>bestScore){bestScore=score;sv('sq_nq_best_thi',score)}if(qmode==='climb')climbDone();
 const t=p>=90?'🌞 Sứ giả Mặt Trời xuất sắc!':p>=70?'🌤 Tia nắng rực rỡ':p>=50?'⛅ Đang lên sáng dần':'🌥 Cần thêm chút nắng';
 p>=90?say(R(M_F90),'joy','happy'):p>=70?say(R(M_F70),'proud','happy'):p>=50?say(R(M_F50),'surprise','happy'):p>=30?say(R(M_F30),'bored','sad'):say(R(M_F0),'cry','sad');
-$('#result').innerHTML=`<div class="hero"><div class="big"><svg class="sf" viewBox="0 0 100 100" style="width:56px;height:56px;vertical-align:-10px"><use href="#sf"/></svg> ${score}/${Q.length}</div><h2>${t}</h2><p class="mut">${qmode==='thi'?'📝 THI':'📖 ÔN'} • Chính xác ${p}% • Chuỗi đúng dài nhất: ${maxStreak} 🔥${ckUn()?' • Chưa làm: '+ckUn():''}</p></div>${wrong.length?`<h3>Các câu cần ôn lại</h3>${wrong.map(w=>`<div class="item"><div class="t"><b>${esc(w.q)}</b><br><small>Mày chọn: ${esc(w.y)}</small><br><small style="color:var(--ok)">Đúng: ${esc(w.a)}</small></div></div>`).join('')}`:'<p class="hero">Không sai câu nào, hoàn hảo! 🌻</p>'}<div class="row">${wrong.length?`<button id="redo">📝 Ôn lại (${wrong.length} câu sai)</button>`:''}<button id="again">🔄 Chơi lại</button><button class="sec" id="toHome">🏠 Trang chủ</button></div>`;
+$('#result').innerHTML=`<div class="hero"><div class="big"><svg class="sf" viewBox="0 0 100 100" style="width:56px;height:56px;vertical-align:-10px"><use href="#sf"/></svg> ${score}/${Q.length}</div><h2>${t}</h2><p class="mut">${qmode==='thi'?'📝 THI':qmode==='climb'?'⛰️ LEO NÚI':'📖 ÔN'} • Chính xác ${p}% • Chuỗi đúng dài nhất: ${maxStreak} 🔥${ckUn()?' • Chưa làm: '+ckUn():''}</p></div>${wrong.length?`<h3>Các câu cần ôn lại</h3>${wrong.map(w=>`<div class="item"><div class="t"><b>${esc(w.q)}</b><br><small>Mày chọn: ${esc(w.y)}</small><br><small style="color:var(--ok)">Đúng: ${esc(w.a)}</small></div></div>`).join('')}`:'<p class="hero">Không sai câu nào, hoàn hảo! 🌻</p>'}<div class="row">${wrong.length?`<button id="redo">📝 Ôn lại (${wrong.length} câu sai)</button>`:''}${qmode==='climb'?'<button id="clLb" type="button">🏆 Xếp hạng</button>':''}<button id="again">🔄 Chơi lại</button><button class="sec" id="toHome">🏠 Trang chủ</button></div>`;
 show('result');if(wrong.length)$('#redo').onclick=reviewPopup;$('#again').onclick=()=>begin(qmode,lastL,lastLab);$('#toHome').onclick=home}
 /* LIBRARY */
 function lib(){const s=$('#search').value.toLowerCase();const lc=$('#libCat').value;let shown=0;
@@ -513,6 +531,95 @@ function ckAfterEdit(old,item){
 function ckSubmit(){const un=ckUn();
  if(un&&!confirm('Còn '+un+' câu chưa làm. Vẫn nộp bài và xem kết quả?')){ckOpen('none');return}
  ckClose();ckRecalc();finish()}
+/* ===== LEO NÚI (bảng xếp hạng lưu trên trình duyệt) ===== */
+let climbName=ld('sq_nq_climb_name',''),climbT0=0,climbLast=null;
+const CL_TOP=2917,CL_KEY='sq_nq_climb_lb';
+const clLB=()=>{const a=ld(CL_KEY,[]);return Array.isArray(a)?a:[]};
+const clFmt=s=>{s=Math.max(0,Math.round(s));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+const clKey=n=>String(n).trim().toLowerCase();
+const clPick=a=>a[Math.floor(Math.random()*a.length)];
+/* Bảng chung: dán URL Firebase Realtime Database vào dòng dưới (để trống = chỉ lưu trên máy) */
+const CL_DB='https://nq26-leonui-default-rtdb.asia-southeast1.firebasedatabase.app';
+const CL_ON=CL_DB.trim()!=='',clBase=()=>CL_DB.trim().replace(/\/+$/,''),clSafe=n=>encodeURIComponent(clKey(n).replace(/[.$#\[\]\/]/g,'_'));
+async function clFetch(path,opt){const c=new AbortController(),t=setTimeout(()=>c.abort(),8000);try{const r=await fetch(clBase()+'/'+path+'.json',Object.assign({signal:c.signal},opt||{}));if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(t)}}
+async function clSend(r){const k=clSafe(r.n),cur=await clFetch('players/'+k);
+ if(!cur||r.s>cur.s||(r.s===cur.s&&r.t<cur.t))await clFetch('players/'+k,{method:'PUT',body:JSON.stringify(r)});
+ if(r.s*2>=r.q){const sp=await clFetch('speed/'+k);if(!sp||r.t<sp.t)await clFetch('speed/'+k,{method:'PUT',body:JSON.stringify(r)})}}
+async function clFlush(){const p=ld('sq_nq_climb_pending',[]);if(!CL_ON||!Array.isArray(p)||!p.length)return;const left=[];for(const r of p){try{await clSend(r)}catch(e){left.push(r)}}sv('sq_nq_climb_pending',left)}
+async function clData(){
+ if(!CL_ON){const R=clRank(),f=clRecords(R).bf;return{R,bf:f?{n:f.n,t:f.bt}:null,online:false}}
+ try{await clFlush();const[pl,sp]=await Promise.all([clFetch('players'),clFetch('speed')]);
+  const R=Object.values(pl||{}).filter(x=>x&&typeof x.s==='number'&&typeof x.t==='number').sort((a,b)=>b.s-a.s||a.t-b.t||a.d-b.d);
+  let bf=null;Object.values(sp||{}).forEach(x=>{if(x&&typeof x.t==='number'&&(!bf||x.t<bf.t))bf={n:x.n,t:x.t}});
+  sv('sq_nq_climb_cache',{R:R.slice(0,30),bf});return{R,bf,online:true}}
+ catch(e){const c=ld('sq_nq_climb_cache',null);if(c&&Array.isArray(c.R))return{R:c.R,bf:c.bf,online:false};const R=clRank(),f=clRecords(R).bf;return{R,bf:f?{n:f.n,t:f.bt}:null,online:false}}}
+function clRank(){const m=new Map();
+ clLB().forEach(r=>{const k=clKey(r.n),p=m.get(k),fast=r.s*2>=r.q?r.t:null;
+  if(!p)m.set(k,{n:r.n,s:r.s,t:r.t,q:r.q,d:r.d,bt:fast});
+  else{if(r.s>p.s||(r.s===p.s&&r.t<p.t)){p.s=r.s;p.t=r.t;p.q=r.q;p.d=r.d;p.n=r.n}if(fast!==null&&(p.bt===null||fast<p.bt))p.bt=fast}});
+ return [...m.values()].sort((a,b)=>b.s-a.s||a.t-b.t||a.d-b.d)}
+function clRecords(R){let bs=R[0],bf=null;R.forEach(p=>{if(p.bt!==null&&(!bf||p.bt<bf.bt))bf=p});return{bs,bf}}
+function clScene(name){
+ let leaves='';for(let a=-120;a<=120;a+=24)leaves+=`<ellipse cx="0" cy="-17" rx="3.6" ry="7" fill="#43a047" stroke="#2e7d32" stroke-width=".8" transform="rotate(${a})"/>`;
+ const nm=name?esc(name.length>11?name.slice(0,10)+'…':name):'???';
+ const who=name?`<g transform="translate(160 46)">${leaves}<circle r="15" fill="#ffd9a8" stroke="#c98a4b" stroke-width="1"/><circle cx="-5.5" cy="-2" r="1.9" fill="#3b2410"/><circle cx="5.5" cy="-2" r="1.9" fill="#3b2410"/><circle cx="-9" cy="3" r="2.6" fill="#ff9aa8" opacity=".7"/><circle cx="9" cy="3" r="2.6" fill="#ff9aa8" opacity=".7"/><path d="M-5 4Q0 10 5 4" fill="none" stroke="#3b2410" stroke-width="1.6" stroke-linecap="round"/><path d="M-6 -17Q0 -22 6 -17L9 -13Q0 -17 -9 -13Z" fill="#e53935"/></g><path d="M160 62V84M160 68L143 56M160 68L177 56" stroke="#ff9800" stroke-width="5" stroke-linecap="round" fill="none"/><text x="108" y="38" font-size="14">✨</text><text x="205" y="30" font-size="14">✨</text><text x="140" y="14" font-size="14">🌿</text>`:`<text x="160" y="52" font-size="30" text-anchor="middle">🪑</text>`;
+ return `<svg class="clSc" viewBox="0 0 320 200" role="img" aria-label="Đỉnh Olympia"><defs><linearGradient id="clSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#fff3c4"/></linearGradient></defs><rect width="320" height="200" fill="url(#clSky)"/><circle cx="278" cy="34" r="16" fill="#ffd54f"/><ellipse cx="60" cy="40" rx="26" ry="10" fill="#fff" opacity=".9"/><ellipse cx="82" cy="34" rx="18" ry="9" fill="#fff" opacity=".9"/><ellipse cx="250" cy="82" rx="22" ry="8" fill="#fff" opacity=".85"/><polygon points="0,200 70,120 110,150 160,86 230,150 270,126 320,200" fill="#8d6e63"/><polygon points="160,86 190,118 175,112 160,124 145,112 130,118" fill="#fff"/><polygon points="0,200 70,150 130,200" fill="#6d4c41"/><polygon points="190,200 260,148 320,200" fill="#6d4c41"/>${who}<rect x="200" y="62" width="2.5" height="30" fill="#5d4037"/><rect x="202" y="62" width="78" height="18" rx="3" fill="#fff8e1" stroke="#c98a4b"/><text x="241" y="75" font-size="11" font-weight="700" text-anchor="middle" fill="#3b2410">${nm}</text><g transform="translate(128 96)"><rect width="64" height="6" fill="#efe6d8"/><rect x="4" y="6" width="7" height="14" fill="#f7f1e6"/><rect x="21" y="6" width="7" height="14" fill="#f7f1e6"/><rect x="36" y="6" width="7" height="14" fill="#f7f1e6"/><rect x="53" y="6" width="7" height="14" fill="#f7f1e6"/><rect y="20" width="64" height="4" fill="#efe6d8"/></g><text x="160" y="190" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">🏛️ Đỉnh Olympia 2.917 m</text></svg>`}
+const CL_Q=['{n} đã chạm đỉnh Olympia! Thần Zeus gật gù, mấy chú dê núi cũng vỗ tay 🐐👏','Vòng nguyệt quế của {n} xanh hơn cả tờ nghị quyết mới in 🌿😎','{n} leo một mạch, không dừng chân, không xin nước! Thần thoại là đây 🏛️','Gió trên đỉnh hơi lạnh, nhưng vòng nguyệt quế của {n} thì ấm áp 🌿✨','Thần Zeus vừa nhắn: "{n} ơi, cho xin chữ ký với!" ⚡😆'];
+async function clBoard(){
+ const tok=String(Date.now());modal('<p class="clq">⏳ Đang leo lên đỉnh xem bảng xếp hạng…</p>');$('#mbox').dataset.t=tok;
+ const D=await clData();if($('#mbox').dataset.t!==tok)return;
+ const R=D.R,top=R[0],me=climbName?clKey(climbName):'';
+ let h=`<h2 style="text-align:center">🏔️ Bảng xếp hạng Leo núi</h2>${clScene(top&&top.n)}`;
+ h+=top?`<p class="clq">${esc(clPick(CL_Q).replace('{n}',top.n))}</p>`:'<p class="clq">Chưa ai lên đỉnh, ghế vô địch đang trống! Ai dám leo trước? 🪑</p>';
+ if(top)h+=`<div class="clRec"><span>🏆 Cao nhất: ${top.s}/${top.q} (${esc(top.n)})</span>${D.bf?`<span>⚡ Nhanh nhất: ${clFmt(D.bf.t)} (${esc(D.bf.n)})</span>`:''}</div><p class="mut" style="text-align:center;font-size:13px;margin:0">Xếp hạng: điểm cao hơn thắng, bằng điểm thì ai nhanh hơn thắng. Kỷ lục tốc độ tính từ một nửa số điểm trở lên.</p>`;
+ if(R.length)h+='<div class="clTb">'+R.slice(0,15).map((p,k)=>`<div class="clR${clKey(p.n)===me?' me':''}"><span class="rk">${['🥇','🥈','🥉'][k]||k+1}</span><span class="nm">${esc(p.n)}</span><span class="sc">${p.s}/${p.q}</span><span class="tm">⏱ ${clFmt(p.t)}</span></div>`).join('')+'</div>';
+ const mi=me?R.findIndex(p=>clKey(p.n)===me):-1;
+ if(mi>=15)h+=`<p class="mut" style="text-align:center">Bạn đang hạng ${mi+1}/${R.length}</p>`;
+ h+=`<div class="row"><button type="button" id="clGo2">🧗 Leo núi</button><button type="button" class="sec" id="cx">Đóng</button></div>${(!CL_ON&&R.length)?'<div class="row"><button type="button" class="sec sm" id="clDel">🗑 Xóa bảng xếp hạng</button></div>':''}<p class="mut" style="text-align:center;font-size:12px">${D.online?'🌐 Bảng chung của mọi người chơi.':CL_ON?'⚠️ Chưa kết nối được bảng chung, đang hiện dữ liệu đã lưu trên máy.':'Bảng này lưu ngay trên trình duyệt của máy đang chơi.'}</p>`;
+ modal(h);$('#cx').onclick=close;$('#clGo2').onclick=climbStart;
+ if($('#clDel'))$('#clDel').onclick=()=>{if(confirm('Xóa toàn bộ bảng xếp hạng Leo núi?')){sv(CL_KEY,[]);climbHome();clBoard()}}}
+function climbStart(){
+ modal(`<h2>⛰️ Leo núi Olympia</h2><p class="mut">Mỗi lượt 40 câu như bộ THI. Trả lời đúng thì leo cao, sai thì trượt chân đứng yên. Ai hạng 1 được đội vòng nguyệt quế trên đỉnh Olympia 🌿</p><label>Tên người leo núi<input id="clName" maxlength="20" placeholder="Nhập tên của bạn" value="${esc(climbName)}" autocomplete="off"></label><div class="row"><button type="button" id="clGo">🧗 Leo thôi!</button><button type="button" class="sec" id="clBd">🏆 Bảng xếp hạng</button><button type="button" class="sec" id="cx">Đóng</button></div>`);
+ const inp=$('#clName');setTimeout(()=>inp.focus(),60);
+ const go=()=>{const n=inp.value.trim().replace(/\s+/g,' ');if(!n){inp.style.borderColor='var(--bad)';inp.placeholder='Cho mình xin cái tên đã nè 🥺';inp.focus();return}climbName=n;sv('sq_nq_climb_name',n);close();begin('climb')};
+ $('#clGo').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};$('#clBd').onclick=clBoard;$('#cx').onclick=close}
+function climbTrack(){if(qmode!=='climb'||!Array.isArray(Q))return;const q=$('#quiz'),bar=q.querySelector('.bar');if(!bar)return;
+ let t=$('#clTrack');if(!t){t=document.createElement('div');t.id='clTrack';bar.parentNode.insertBefore(t,bar.nextSibling)}
+ const N=Q.length,p=Math.min(1,score/N)*88;
+ t.innerHTML=`<div class="clRow"><span>⛰️ ${Math.round(score*CL_TOP/N).toLocaleString('vi-VN')} m / ${CL_TOP.toLocaleString('vi-VN')} m</span><span>⏱ <b id="clT">${clFmt((Date.now()-climbT0)/1000)}</b></span></div><div class="clMt"><span class="clPeak">🏛️</span><span class="clMan" style="left:${p}%;bottom:${p}%">🧗</span></div>`}
+setInterval(()=>{const e=document.getElementById('clT');if(e&&qmode==='climb')e.textContent=clFmt((Date.now()-climbT0)/1000)},1000);
+function climbDone(){const sec=Math.round((Date.now()-climbT0)/1000),run={n:climbName,s:score,t:sec,d:Date.now(),q:Q.length};
+ const before=clRank(),tb=before[0]?clKey(before[0].n):'';
+ const lb=clLB();lb.push(run);sv(CL_KEY,lb.slice(-500));
+ climbLast={sec,score:run.s,q:run.q,pos:0,total:0,took:false,first:false,offline:false};
+ if(!CL_ON){const R=clRank();Object.assign(climbLast,{pos:R.findIndex(p=>clKey(p.n)===clKey(climbName))+1,total:R.length,took:before.length>0&&tb!==clKey(climbName)&&R[0]&&clKey(R[0].n)===clKey(climbName),first:before.length===0});setTimeout(climbPopup,700);return}
+ setTimeout(async()=>{modal('<p class="clq">⏳ Đang nộp điểm lên đỉnh Olympia…</p>');const tok='s'+Date.now();$('#mbox').dataset.t=tok;
+  const D0=await clData(),top0=D0.R[0]?clKey(D0.R[0].n):'';let ok=true;
+  try{await clSend(run)}catch(e){ok=false;const p=ld('sq_nq_climb_pending',[]);p.push(run);sv('sq_nq_climb_pending',p.slice(-50))}
+  if($('#mbox').dataset.t!==tok)return;
+  if(!ok){climbLast.offline=true;climbPopup();return}
+  const D1=await clData(),R=D1.R,pos=R.findIndex(p=>clKey(p.n)===clKey(climbName))+1;
+  Object.assign(climbLast,{pos,total:R.length,took:D0.R.length>0&&top0!==clKey(climbName)&&pos===1,first:D0.R.length===0});
+  if($('#mbox').dataset.t!==tok)return;climbPopup()},700)}
+function climbPopup(){const L=climbLast;if(!L)return;const alt=Math.round(L.score*CL_TOP/L.q).toLocaleString('vi-VN');
+ let h,msg;
+ if(L.offline){
+  h=`<h2 style="text-align:center">⛰️ Leo xong rồi!</h2><p class="clq">Chưa kết nối được bảng xếp hạng chung 📡 Điểm của bạn đã lưu tạm trên máy và sẽ tự gửi lên lần sau có mạng.</p>`}
+ else if(L.pos===1){
+  msg=L.first?'Người đầu tiên trên bảng! Ngồi ghế vô địch luôn nhé, chưa ai giành 🪑👑':L.took?'SOÁN NGÔI THÀNH CÔNG! Thần Zeus đã đội vòng nguyệt quế cho bạn 🌿⚡':'Vẫn vững ngôi vương trên đỉnh Olympia! Vòng nguyệt quế chưa rơi 🌿😎';
+  h=`<h2 style="text-align:center">🏆 TOP 1 ĐỈNH OLYMPIA!</h2>${clScene(climbName)}<p class="clq">${esc(msg)}</p>`}
+ else{
+  msg=L.score*4<L.q?'Trượt chân từ chân núi rồi 😅 Nghỉ chút uống nước rồi leo lại nha!':L.pos<=3?'Gần chạm đỉnh lắm rồi, thần Zeus đã nhìn thấy bạn 👀⚡':L.score*10>=L.q*8?'Leo khỏe quá, chỉ còn vài bước tới vòng nguyệt quế 🌿':'Đang leo giữa lưng chừng núi, cố lên nha 🧗💪';
+  h=`<h2 style="text-align:center">⛰️ Kết quả leo núi</h2><div class="hero"><div class="big">${L.pos}<small style="font-size:22px">/${L.total}</small></div><p class="mut">hạng của ${esc(climbName)}</p></div><p class="clq">${esc(msg)}</p>`}
+ h+=`<div class="clRec"><span>⭐ ${L.score}/${L.q}</span><span>⛰️ ${alt} m</span><span>⏱ ${clFmt(L.sec)}</span></div><div class="row"><button type="button" id="clB3">🏆 Bảng xếp hạng</button><button type="button" class="sec" id="clAg">🔄 Leo lại</button><button type="button" class="sec" id="cx">Đóng</button></div>`;
+ modal(h);$('#cx').onclick=close;$('#clB3').onclick=clBoard;$('#clAg').onclick=()=>{close();begin('climb')}}
+async function climbHome(){const e=$('#climbTop');if(!e)return;
+ const paint=D=>{const t=D.R[0];e.innerHTML=t?`🏔️ Đỉnh Olympia: <b>${esc(t.n)}</b> 🌿 ${t.s}/${t.q} • ⏱ ${clFmt(t.t)}`:'🏔️ Chưa ai chinh phục đỉnh Olympia, bấm LEO NÚI để làm người đầu tiên!'};
+ if(!CL_ON){paint({R:clRank()});return}
+ const c=ld('sq_nq_climb_cache',null);if(c&&Array.isArray(c.R))paint(c);else e.textContent='🏔️ Đang xem ai đang ở đỉnh Olympia…';
+ const D=await clData();if(D.online||!c)paint(D)}
+document.addEventListener('click',e=>{if(e.target.closest('#clLb'))clBoard()});
+
 home();syncMusic();
 </script>
 <script>(function(){const U={laptop:'./chuyen-mon.html',boat:'./nghi-quyet.html',lantern:'./tai-lieu-on-tap.html'};
