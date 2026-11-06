@@ -522,9 +522,9 @@ function ckRecalc(){score=0;wrong=[];streak=0;maxStreak=0;let run=0;
   else{run=0;wrong.push({r:c.r,q:c.q,a:c.o[c.a],y:k<0?'(hết giờ)':c.o[k]})}});
  streak=run}
 function ckFb(c){
- $('#fb').innerHTML=(c.e?`<div class="exp">💡 ${esc(c.e)}</div>`:'')+`<div class="row"><button id="nx">${i+1<Q.length?'Câu tiếp theo →':'Xem kết quả 🏁'}</button></div><div class="row ckact"><button type="button" class="sm sec" id="ckRd">↺ Làm lại câu này</button><button type="button" class="sm sec" id="ckEd">✏️ Sửa câu</button></div>`;
+ $('#fb').innerHTML=(c.e?`<div class="exp">💡 ${esc(c.e)}</div>`:'')+`<div class="row"><button id="nx">${i+1<Q.length?'Câu tiếp theo →':'Xem kết quả 🏁'}</button></div>`;
  $('#nx').onclick=()=>{if(i+1<Q.length){i++;render()}else ckSubmit()};
- $('#ckRd').onclick=ckRedo;$('#ckEd').onclick=ckEdit}
+}
 function ckAfterRender(){
  const c=Q[i],a=ans[i];
  if(a!==undefined){locked=true;document.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;if(k===c.a)b.classList.add('ok');else if(k===a)b.classList.add('bad')});ckFb(c)}
