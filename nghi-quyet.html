@@ -374,7 +374,7 @@ function reviewPopup(){const n=wrong.length;if(!n)return;const f=FACES.angry||FA
 function begin(m,L,lab){lastL=L||null;lastLab=lab||'';ckLab=lab||(m==='thi'?'📝 THI':'📖 ÔN');syncMusic();qmode=m;Q=m==='thi'?shuf([].concat(...THI.map(g=>draw(g[0],g[1])))).map(b=>mkQ(b,false)):shuf(L||pool()).map(b=>mkQ(b,true));if(!Q.length)return;i=0;wr=0;score=0;streak=0;maxStreak=0;wrong=[];ckInit();show('quiz');say(R(M_START),'cheer');render()}
 $('#bOn').onclick=onChoose;$('#bThi').onclick=()=>begin('thi');
 function render(){clearInterval(tmr);locked=false;if(i>0)say(R(M_THINK),'think');const c=Q[i];const L='ABCD';
-const M=$('.mascot');document.body.appendChild(M);M.classList.remove('inline');$('#quiz').innerHTML=`<div class="hud"><button type="button" class="sm sec" id="qBack">🏠 Trang chủ</button><span>${qmode==='thi'?'📝 THI':'📖 ÔN'} • Câu ${i+1}/${Q.length}</span><span id="tm"></span><span class="scr"><svg class="sf hud-sf" viewBox="0 0 100 100"><use href="#sf"/></svg><b id="scv">${score}</b> &nbsp; 🔥 <b id="stv">${streak}</b></span></div><div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div id="mSlot"></div><div class="q" style="white-space:pre-line;font-size:${c.q.length>180?17:21}px">${esc(c.q)}</div><div id="opts">${c.o.map((t,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span>${esc(t)}</button>`).join('')}</div><div id="fb"></div><div id="qnav"></div>`;
+const M=$('.mascot');document.body.appendChild(M);M.classList.remove('inline');$('#quiz').innerHTML=`<div class="hud"><button type="button" class="sm sec" id="qBack">🏠 Trang chủ</button><span>${qmode==='thi'?'📝 THI':'📖 ÔN'} • Câu ${i+1}/${Q.length}</span><span id="tm"></span><span class="scr"><svg class="sf hud-sf" viewBox="0 0 100 100"><use href="#sf"/></svg><b id="scv">${score}</b> &nbsp; 🔥 <b id="stv">${streak}</b></span></div><div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div id="mSlot"></div><div class="q" style="white-space:pre-line;font-size:${c.q.length>180?17:21}px">${esc(c.q)}</div><div id="opts">${c.o.map((t,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span>${esc(t)}</button>`).join('')}</div><div id="fb"></div>`;
 M.classList.add('inline');$('#mSlot').appendChild(M);
 document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(+b.dataset.k));
 $('#qBack').onclick=()=>{if(confirm('Thoát bài đang làm và về trang chủ?')){clearInterval(tmr);home()}};
@@ -441,16 +441,19 @@ function onChoose(){
  document.querySelectorAll('#mbox [data-s]').forEach(b=>b.onclick=()=>{const q=b.dataset.s.split('-').map(Number),s=q[0],e=q[1];close();begin('on',P.slice(s,e),'📖 ÔN · '+nm+' · '+(s===0&&e===N?'Bộ tổng':'Bộ chia '+(Math.floor(s/z)+1)+' (câu '+(s+1)+'–'+e+')'))})}
 let lastL=null,lastLab='';
 /* ===== CHECKLIST CÂU HỎI (menu nhảy câu khi ôn/thi) ===== */
-let ans=[],flg=new Set(),ckLab='',ckTab='auto',ckView='grid',ckFil='all';
+let ans=[],ckLab='',ckTab='auto',ckView='grid',ckFil='all';
 const ckL='ABCD',ckUn=()=>ans.filter(x=>x===undefined).length,ckSt=n=>ans[n]===undefined?'none':ans[n]===Q[n].a?'ok':'bad',ckCut=(s,m)=>{s=String(s);return s.length>m?s.slice(0,m)+'…':s};
 const ckP=document.createElement('button');ckP.type='button';ckP.className='sm ckp';ckP.hidden=true;document.body.appendChild(ckP);
 const ckM=document.createElement('div');ckM.className='ckm hide';ckM.innerHTML='<div class="ckbox"></div>';document.body.appendChild(ckM);
 const ckB=ckM.firstChild;
-function ckInit(){ans=Q.map(()=>undefined);flg=new Set();ckTab='auto';ckFil='all';ckClose();ckPill()}
+function ckInit(){ans=Q.map(()=>undefined);ckTab='auto';ckFil='all';ckClose();ckPill()}
 function ckPill(){ckP.textContent='📋 '+(ans.length-ckUn())+'/'+ans.length}
 function ckVis(on){ckP.hidden=!on;if(!on)ckClose()}
 function ckClose(){ckM.classList.add('hide')}
-function ckGroups(){const N=Q.length;if(N<=100)return null;const g=Math.ceil(N/50),z=Math.ceil(N/g),a=[];for(let s=0;s<N;s+=z)a.push([s,Math.min(s+z,N)]);return a}
+function ckGroups(){const N=Q.length;if(N<=100)return null;
+ if(typeof topicOf==='function'){const u=[];Q.forEach((c,n)=>{const t=topicOf(c.r),l=u[u.length-1];if(l&&l[3]===t)l[1]=n+1;else u.push([n,n+1,(TOP[t]||[0,'Khác'])[1],t])});
+  if(u.length>1&&u.length<=14)return u}
+ const g=Math.ceil(N/50),z=Math.ceil(N/g),a=[];for(let s=0;s<N;s+=z)a.push([s,Math.min(s+z,N)]);return a}
 function ckOpen(f){if(!Array.isArray(Q)||!Q.length)return;if(f)ckFil=f;const G=ckGroups();
  if(!G)ckTab='all';else if(ckTab==='auto')ckTab=String(Math.max(0,G.findIndex(g=>i>=g[0]&&i<g[1])));
  ckDraw();ckM.classList.remove('hide')}
@@ -459,18 +462,18 @@ function ckDraw(){
  let r=[0,N];if(G&&ckTab!=='all'&&G[+ckTab])r=G[+ckTab];
  const cnt=(s,e)=>{let d=0;for(let n=s;n<e;n++)if(ans[n]!==undefined)d++;return d};
  let h=`<div class="ckh"><h2>📋 ${esc(ckLab||'Checklist câu hỏi')}</h2><button type="button" class="sm sec" data-a="x">✕ Đóng</button></div>`;
- h+=`<div class="cks">Đã làm ${N-un}/${N} · ✅ ${ok} · ❌ ${bad} · ⬜ ${un}${flg.size?' · 🚩 '+flg.size:''}</div>`;
- if(G)h+='<div class="ckrow"><button type="button" class="'+(ckTab==='all'?'on':'sec')+'" data-t="all">Bộ tổng · '+(N-un)+'/'+N+'</button>'+G.map((g,k)=>`<button type="button" class="${ckTab===String(k)?'on':'sec'}" data-t="${k}">Bộ chia ${k+1} · câu ${g[0]+1}–${g[1]} · ${cnt(g[0],g[1])}/${g[1]-g[0]}</button>`).join('')+'</div>';
- h+='<div class="ckrow">'+[['all','Tất cả'],['none','⬜ Chưa làm'],['bad','❌ Sai'],['flag','🚩 Đã đánh dấu']].map(f=>`<button type="button" class="${ckFil===f[0]?'on':'sec'}" data-f="${f[0]}">${f[1]}</button>`).join('')+'</div>';
+ h+=`<div class="cks">Đã làm ${N-un}/${N} · ✅ ${ok} · ❌ ${bad} · ⬜ ${un}</div>`;
+ if(G)h+='<div class="ckrow"><button type="button" class="'+(ckTab==='all'?'on':'sec')+'" data-t="all">Bộ tổng · '+(N-un)+'/'+N+'</button>'+G.map((g,k)=>`<button type="button" class="${ckTab===String(k)?'on':'sec'}" data-t="${k}">${g[2]?g[2]:'Bộ chia '+(k+1)+' · câu '+(g[0]+1)+'–'+g[1]} · ${cnt(g[0],g[1])}/${g[1]-g[0]}</button>`).join('')+'</div>';
+ h+='<div class="ckrow">'+[['all','Tất cả'],['none','⬜ Chưa làm'],['bad','❌ Sai']].map(f=>`<button type="button" class="${ckFil===f[0]?'on':'sec'}" data-f="${f[0]}">${f[1]}</button>`).join('')+'</div>';
  h+='<div class="ckrow">'+[['grid','▦ Lưới số'],['list','☰ Danh sách + đáp án']].map(v=>`<button type="button" class="${ckView===v[0]?'on':'sec'}" data-v="${v[0]}">${v[1]}</button>`).join('')+'</div>';
- const idx=[];for(let n=r[0];n<r[1];n++){const s=ckSt(n);if(ckFil==='all'||ckFil===s||(ckFil==='flag'&&flg.has(n)))idx.push(n)}
+ const idx=[];for(let n=r[0];n<r[1];n++){const s=ckSt(n);if(ckFil==='all'||ckFil===s)idx.push(n)}
  if(!idx.length)h+='<p class="mut">Không có câu nào ở mục này.</p>';
- else if(ckView==='grid')h+='<div class="ckg'+(idx.length>60?' dense':'')+'">'+idx.map(n=>`<button type="button" class="ckc ${ckSt(n)}${n===i?' cur':''}${flg.has(n)?' fl':''}" data-n="${n}" title="${esc(ckCut(Q[n].q,80))}">${n+1}</button>`).join('')+'</div>';
+ else if(ckView==='grid')h+='<div class="ckg'+(idx.length>60?' dense':'')+'">'+idx.map(n=>`<button type="button" class="ckc ${ckSt(n)}${n===i?' cur':''}" data-n="${n}" title="${esc(ckCut(Q[n].q,80))}">${n+1}</button>`).join('')+'</div>';
  else h+='<div class="ckl">'+idx.map(n=>{const c=Q[n],a=ans[n];let d;
   if(a===undefined)d='Chưa làm';
   else if(a===c.a)d=`<b>✅ Đúng</b> · ${ckL[a]}. ${esc(ckCut(c.o[a],90))}`;
   else d=`<b>❌ ${a<0?'Hết giờ':'Bạn chọn '+ckL[a]}</b> · Đúng: ${ckL[c.a]}. ${esc(ckCut(c.o[c.a],90))}`;
-  return `<button type="button" class="ckr ${ckSt(n)}${n===i?' cur':''}" data-n="${n}"><span class="ckn">${n+1}${flg.has(n)?'🚩':''}</span><span class="ckt"><span class="ckq">${esc(ckCut(c.q,160))}</span><small>${d}</small></span></button>`}).join('')+'</div>';
+  return `<button type="button" class="ckr ${ckSt(n)}${n===i?' cur':''}" data-n="${n}"><span class="ckn">${n+1}</span><span class="ckt"><span class="ckq">${esc(ckCut(c.q,160))}</span><small>${d}</small></span></button>`}).join('')+'</div>';
  h+='<div class="ckf"><button type="button" data-a="sub">🏁 Nộp bài / Xem kết quả</button><button type="button" class="sec" data-a="x">Đóng</button></div>';
  const st=ckB.scrollTop;ckB.innerHTML=h;ckB.scrollTop=st}
 ckB.onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
@@ -494,10 +497,7 @@ function ckFb(c){
  $('#nx').onclick=()=>{if(i+1<Q.length){i++;render()}else ckSubmit()};
  $('#ckRd').onclick=ckRedo;$('#ckEd').onclick=ckEdit}
 function ckAfterRender(){
- const c=Q[i],a=ans[i],n=Q.length;
- $('#qnav').innerHTML=`<div class="row ckbn"><button type="button" class="sm sec" id="ckPv"${i?'':' disabled'}>◀ Trước</button><button type="button" class="sm sec${flg.has(i)?' on':''}" id="ckFg">${flg.has(i)?'🚩 Bỏ đánh dấu':'🏳️ Đánh dấu'}</button><button type="button" class="sm sec" id="ckNx"${i+1<n?'':' disabled'}>Sau ▶</button></div>`;
- $('#ckPv').onclick=()=>{i--;render()};$('#ckNx').onclick=()=>{i++;render()};
- $('#ckFg').onclick=e=>{const b=e.currentTarget;flg.has(i)?flg.delete(i):flg.add(i);const on=flg.has(i);b.classList.toggle('on',on);b.textContent=on?'🚩 Bỏ đánh dấu':'🏳️ Đánh dấu'};
+ const c=Q[i],a=ans[i];
  if(a!==undefined){locked=true;document.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;if(k===c.a)b.classList.add('ok');else if(k===a)b.classList.add('bad')});ckFb(c)}
  ckPill()}
 function ckRedo(){ans[i]=undefined;ckRecalc();render()}
