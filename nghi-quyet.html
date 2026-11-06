@@ -190,6 +190,7 @@ main{padding-top:58px!important}
 .clR .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .clR .sc{font-weight:800}
 .clR .tm{color:var(--mut);font-size:13px}
+.clPrize{margin:8px 0;padding:10px 12px;text-align:center;font-weight:700;border-radius:14px;border:2px dashed #ffb300;background:rgba(255,193,7,.18);line-height:1.5}
 </style>
 </head>
 <body>
@@ -629,7 +630,7 @@ function climbPopup(){const L=climbLast;if(!L)return;const alt=Math.round(L.scor
   h=`<h2 style="text-align:center">⛰️ Leo xong rồi!</h2><p class="clq">Chưa kết nối được bảng xếp hạng chung 📡 Điểm của bạn đã lưu tạm trên máy và sẽ tự gửi lên lần sau có mạng.</p>`}
  else if(L.pos===1){
   msg=L.first?'Người đầu tiên trên bảng! Ngồi ghế vô địch luôn nhé, chưa ai giành 🪑👑':L.took?'SOÁN NGÔI THÀNH CÔNG! Thần Zeus đã đội vòng nguyệt quế cho bạn 🌿⚡':'Vẫn vững ngôi vương trên đỉnh Olympia! Vòng nguyệt quế chưa rơi 🌿😎';
-  h=`<h2 style="text-align:center">🏆 TOP 1 ĐỈNH OLYMPIA!</h2>${clScene(climbName)}<p class="clq">${esc(msg)}</p>`}
+  h=`<h2 style="text-align:center">🏆 TOP 1 ĐỈNH OLYMPIA!</h2>${clScene(climbName)}<p class="clq">${esc(msg)}</p><div class="clPrize">🎉 Chúc mừng, bạn đã trúng <b>giải đặc biệt</b>!<br>🎁 Đặc quyền: <b>bank cho deenngo 5 xị</b> 💸</div>`}
  else{
   msg=L.score*4<L.q?'Trượt chân từ chân núi rồi 😅 Nghỉ chút uống nước rồi leo lại nha!':L.pos<=3?'Gần chạm đỉnh lắm rồi, thần Zeus đã nhìn thấy bạn 👀⚡':L.score*10>=L.q*8?'Leo khỏe quá, chỉ còn vài bước tới vòng nguyệt quế 🌿':'Đang leo giữa lưng chừng núi, cố lên nha 🧗💪';
   h=`<h2 style="text-align:center">⛰️ Kết quả leo núi</h2><div class="hero"><div class="big">${L.pos}<small style="font-size:22px">/${L.total}</small></div><p class="mut">hạng của ${esc(climbName)}</p></div><p class="clq">${esc(msg)}</p>`}
