@@ -147,6 +147,7 @@ button.climbBtn:before{content:"";position:absolute;top:0;bottom:0;left:0;width:
 .kh{font-size:12px;text-align:center;margin:10px 0 0}@media (hover:none){.kh{display:none}}
 .ckpb.done{border-color:var(--ok);background:rgba(76,175,80,.16)}
 #info a{color:inherit;font-weight:700}
+.onh{margin:16px 0 6px;font-size:16px}
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8C%BB%3C/text%3E%3C/svg%3E">
 <style id="ck-css">
@@ -431,10 +432,14 @@ const catOf=b=>CATS[b.c]?b.c:'other',catShort=b=>CATS[catOf(b)].split(' –')[0]
 const ONK='sq_nq_on_done';let onDone=ld(ONK,{}),pendingOn=null,curOnId=null;
 const catPool=v=>v==='all'?bank:v.slice(0,2)==='t:'?bank.filter(b=>b.t===v.slice(2)):bank.filter(b=>catOf(b)===v);
 const onSets=(v,N)=>{const o=[];if(N<=50){o.push([0,N,v+'|0-'+N+'|'+N]);return o}const g=Math.ceil(N/50),z=Math.ceil(N/g);for(let s=0;s<N;s+=z){const e=Math.min(s+z,N);o.push([s,e,v+'|'+s+'-'+e+'|'+N])}return o};
-const catDone=v=>{const N=catPool(v).length;return N>0&&(onSets(v,N).every(x=>onDone[x[2]])||(N>50&&!!onDone[v+'|tot|'+N]))};
+const QDP=[['nq','Nội quy lao động'],['mt','TB cấm sử dụng ma túy'],['an','An ninh bảo mật'],['tt','QĐ hoạt động trên PTTT'],['kh','Khác']];
+const qdKey=b=>{const t=b.t||'';if(t==='Nội quy Lao động')return'nq';if(t==='Nghiêm cấm Ma túy')return'mt';if(t==='ANBM')return'an';if(t==='Truyền thông')return'tt';if(t==='LMS'){const x=b.q+' '+b.o.join(' ')+' '+(b.e||'');if(/PTTT|mạng xã hội/i.test(x))return'tt';if(/ANBM|ANTT|bảo mật/i.test(x))return'an';return'nq'}return'kh'};
+const onUnits=v=>{const P=catPool(v);if(v==='qd'&&P.length>50){const u=QDP.map(q=>[q[1],P.filter(b=>qdKey(b)===q[0]),v+'~'+q[0]]).filter(x=>x[1].length);if(u.length>1)return u}return[[null,P,v]]};
+const unitDone=u=>{const N=u[1].length;return N>0&&(onSets(u[2],N).every(x=>onDone[x[2]])||(N>50&&!!onDone[u[2]+'|tot|'+N]))};
+const catDone=v=>{const N=catPool(v).length;return N>0&&((N>50&&!!onDone[v+'|tot|'+N])||onUnits(v).every(unitDone))};
 const markDone=(id,p)=>{onDone[id]={p:p,t:Date.now()};sv(ONK,onDone)};
-function onReset(v,re){if(!confirm(v?'Xóa dấu "đã ôn" của mục này?':'Xóa toàn bộ dấu "đã ôn" trên máy này?'))return;Object.keys(onDone).forEach(k=>{if(!v||k.startsWith(v+'|'))delete onDone[k]});sv(ONK,onDone);fillHome();if(re)onChoose()}
-function onInfo(){const v=$('#catSel').value,N=catPool(v).length,S=onSets(v,N),a=S.filter(x=>onDone[x[2]]).length,tot=N>50&&onDone[v+'|tot|'+N]?1:0;let h='';
+function onReset(v,re){if(!confirm(v?'Xóa dấu "đã ôn" của mục này?':'Xóa toàn bộ dấu "đã ôn" trên máy này?'))return;Object.keys(onDone).forEach(k=>{if(!v||k.startsWith(v+'|')||k.startsWith(v+'~'))delete onDone[k]});sv(ONK,onDone);fillHome();if(re)onChoose()}
+function onInfo(){const v=$('#catSel').value,N=catPool(v).length,S=[].concat(...onUnits(v).map(u=>onSets(u[2],u[1].length))),a=S.filter(x=>onDone[x[2]]).length,tot=N>50&&onDone[v+'|tot|'+N]?1:0;let h='';
  if(N&&(a||tot))h+='<br>✅ Đã ôn xong '+(a?a+'/'+S.length+' bộ':'bộ tổng')+' của mục này • <a href="#" id="onRs1">reset mục này</a>';
  if(Object.keys(onDone).length)h+=(h?' • ':'<br>')+'<a href="#" id="onRsAll">reset tất cả dấu đã ôn</a>';
  if(!h)return;$('#info').insertAdjacentHTML('beforeend',h);
@@ -517,13 +522,17 @@ $('#modal').onclick=e=>{if(e.target.id==='modal')close()};
 function onChoose(){
  const P=pool(),N=P.length,v=$('#catSel').value;
  if(N<=50){pendingOn=onSets(v,N)[0][2];begin('on');return}
- const S=onSets(v,N),z=S[0][1]-S[0][0],op=$('#catSel').selectedOptions[0],nm=op?op.textContent.replace(/\s*\(\d+ câu\)\s*$/,'').replace(/^✅\s*/,''):'',tid=v+'|tot|'+N;
- const mk=(id,t)=>{const d=onDone[id];return `<button type="button" class="ckpb${id===tid?' tot':''}${d?' done':''}" data-id="${id}">${d?'✅ ':''}${t}${d?' · '+d.p+'%':''}</button>`};
- let h=`<h2>📖 ÔN · ${esc(nm)}</h2><p class="mut">Mục này có ${N} câu (trên 50) nên chia thành bộ tổng và các bộ chia, mỗi bộ chia tối đa 50 câu. Ôn hết bộ nào thì bộ đó được đánh dấu ✅ (lưu trên máy này).</p>`+mk(tid,'📚 Bộ tổng · '+N+' câu');
- S.forEach((x,k)=>{h+=mk(x[2],'📘 Bộ chia '+(k+1)+' · câu '+(x[0]+1)+'–'+x[1]+' ('+(x[1]-x[0])+' câu)')});
+ const U=onUnits(v),multi=U.length>1,op=$('#catSel').selectedOptions[0],nm=op?op.textContent.replace(/\s*\(\d+ câu\)\s*$/,'').replace(/^✅\s*/,''):'',tid=v+'|tot|'+N,reg={};
+ const mk=(id,t,list,lab)=>{reg[id]=[list,lab];const d=onDone[id];return `<button type="button" class="ckpb${id===tid?' tot':''}${d?' done':''}" data-id="${id}">${d?'✅ ':''}${t}${d?' · '+d.p+'%':''}</button>`};
+ let h=`<h2>📖 ÔN · ${esc(nm)}</h2><p class="mut">Mục này có ${N} câu (trên 50) nên chia thành ${multi?'các phần, mỗi phần chia thêm bộ nếu trên 50 câu':'bộ tổng và các bộ chia, mỗi bộ chia tối đa 50 câu'}. Ôn hết bộ nào thì bộ đó được đánh dấu ✅ (lưu trên máy này).</p>`+mk(tid,'📚 Bộ tổng'+(multi?' cả mục':'')+' · '+N+' câu',P,'Bộ tổng');
+ U.forEach(u=>{const L=u[1],n=L.length,S=onSets(u[2],n),pre=multi?u[0]+' · ':'';
+  if(multi)h+=`<h3 class="onh">${esc(u[0])} <span class="mut">· ${n} câu</span></h3>`;
+  if(n<=50&&multi){h+=mk(S[0][2],'📘 '+esc(u[0])+' · '+n+' câu',L,u[0]);return}
+  if(multi)h+=mk(u[2]+'|tot|'+n,'📚 Bộ tổng phần · '+n+' câu',L,pre+'Bộ tổng');
+  S.forEach((x,k)=>{h+=mk(x[2],'📘 Bộ chia '+(k+1)+' · câu '+(x[0]+1)+'–'+x[1]+' ('+(x[1]-x[0])+' câu)',L.slice(x[0],x[1]),pre+'Bộ chia '+(k+1)+' (câu '+(x[0]+1)+'–'+x[1]+')')})});
  h+='<div class="row"><button type="button" class="sec" id="onR1">🔄 Reset mục này</button><button type="button" class="sec" id="onR2">🔄 Reset tất cả</button><button type="button" class="sec" id="cx">Đóng</button></div>';
  modal(h);$('#cx').onclick=close;$('#onR1').onclick=()=>onReset(v,true);$('#onR2').onclick=()=>onReset(null,true);
- document.querySelectorAll('#mbox [data-id]').forEach(b=>b.onclick=()=>{const id=b.dataset.id;let s0=0,e0=N,lab='Bộ tổng';if(id!==tid){const x=S.find(y=>y[2]===id);s0=x[0];e0=x[1];lab='Bộ chia '+(Math.floor(s0/z)+1)+' (câu '+(s0+1)+'–'+e0+')'}close();pendingOn=id;begin('on',P.slice(s0,e0),'📖 ÔN · '+nm+' · '+lab)})}
+ document.querySelectorAll('#mbox [data-id]').forEach(b=>b.onclick=()=>{const id=b.dataset.id,r=reg[id];close();pendingOn=id;begin('on',r[0],'📖 ÔN · '+nm+' · '+r[1])})}
 let lastL=null,lastLab='';
 /* ===== CHECKLIST CÂU HỎI (menu nhảy câu khi ôn/thi) ===== */
 let ans=[],ckLab='',ckTab='auto',ckView='grid',ckFil='all';
