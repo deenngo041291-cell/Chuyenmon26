@@ -144,6 +144,7 @@ button.climbBtn:before{content:"";position:absolute;top:0;bottom:0;left:0;width:
 .climbTop{max-width:440px;margin:10px auto 0;padding:8px 12px;border-radius:14px;background:rgba(255,213,74,.35);border:2px dashed var(--line);font-weight:700;color:var(--ink)}
 .climbTop:empty{display:none}
 @media (prefers-reduced-motion:reduce){.climbBox,button.climbBtn:before{animation:none}}
+.kh{font-size:12px;text-align:center;margin:10px 0 0}@media (hover:none){.kh{display:none}}
 </style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8C%BB%3C/text%3E%3C/svg%3E">
 <style id="ck-css">
@@ -442,7 +443,7 @@ function reviewPopup(){const n=wrong.length;if(!n)return;const f=FACES.angry||FA
 function begin(m,L,lab){if(m==='climb')climbT0=Date.now();lastL=L||null;lastLab=lab||'';ckLab=lab||(m==='thi'?thiTag():m==='climb'?'⛰️ LEO NÚI · '+climbName:'📖 ÔN');setMus(false);qmode=m;Q=(m==='thi'||m==='climb')?shuf([].concat(...(m==='thi'?thiCfg():THI3).map(g=>draw(g[0],g[1])))).map(b=>mkQ(b,false)):shuf(L||pool()).map(b=>mkQ(b,true));if(!Q.length)return;i=0;wr=0;score=0;streak=0;maxStreak=0;wrong=[];ckInit();show('quiz');say(R(qmode==='climb'?C_START:M_START),'cheer');render()}
 $('#bOn').onclick=()=>{const ks=['all'].concat(Object.keys(CATS).filter(k=>bank.some(b=>catOf(b)===k)));modal('<h2>📖 ÔN · chọn mục</h2>'+ks.map(k=>`<button type="button" class="ckpb" data-k="${k}">${k==='all'?'📚 Tất cả':'📘 '+CATS[k]} (${k==='all'?bank.length:bank.filter(b=>catOf(b)===k).length} câu)</button>`).join('')+'<div class="row"><button type="button" class="sec" id="cx">Đóng</button></div>');$('#cx').onclick=close;document.querySelectorAll('#mbox [data-k]').forEach(b=>b.onclick=()=>{$('#catSel').value=b.dataset.k;set.cat=b.dataset.k;sv('sq_set',set);close();onChoose()})};$('#bThi').onclick=()=>{modal(`<h2>📝 THI · chọn cấp</h2><button type="button" class="ckpb" id="t3">📝 THI Cấp 3 · 40 câu<br><small>${THI3.map(g=>g[1]+' '+CATS[g[0]]).join(' • ')}</small></button><button type="button" class="ckpb" id="t4">📝 THI Cấp 4 · 40 câu<br><small>${THI4.map(g=>g[1]+' '+CATS[g[0]]).join(' • ')}</small></button><div class="row"><button type="button" class="sec" id="cx">Đóng</button></div>`);$('#cx').onclick=close;$('#t3').onclick=()=>{close();thiLv=3;begin('thi')};$('#t4').onclick=()=>{close();thiLv=4;begin('thi')}};$('#bClimb').onclick=climbStart;
 function render(){clearInterval(tmr);locked=false;if(i>0)say(R(qmode==='climb'?C_THINK:M_THINK),'think');const c=Q[i];const L='ABCD';
-const M=$('.mascot');document.body.appendChild(M);M.classList.remove('inline');$('#quiz').innerHTML=`<div class="hud"><button type="button" class="sm sec" id="qBack">🏠 Trang chủ</button><span>${qmode==='thi'?thiTag():qmode==='climb'?'⛰️ LEO NÚI':'📖 ÔN'} • Câu ${i+1}/${Q.length}</span><span id="tm"></span><span class="scr"><svg class="sf hud-sf" viewBox="0 0 100 100"><use href="#sf"/></svg><b id="scv">${score}</b> &nbsp; 🔥 <b id="stv">${streak}</b></span></div><div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div id="mSlot"></div><div class="q" style="white-space:pre-line;font-size:${c.q.length>180?17:21}px">${esc(c.q)}</div><div id="opts">${c.o.map((t,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span>${esc(t)}</button>`).join('')}</div><div id="fb"></div>`;
+const M=$('.mascot');document.body.appendChild(M);M.classList.remove('inline');$('#quiz').innerHTML=`<div class="hud"><button type="button" class="sm sec" id="qBack">🏠 Trang chủ</button><span>${qmode==='thi'?thiTag():qmode==='climb'?'⛰️ LEO NÚI':'📖 ÔN'} • Câu ${i+1}/${Q.length}</span><span id="tm"></span><span class="scr"><svg class="sf hud-sf" viewBox="0 0 100 100"><use href="#sf"/></svg><b id="scv">${score}</b> &nbsp; 🔥 <b id="stv">${streak}</b></span></div><div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div id="mSlot"></div><div class="q" style="white-space:pre-line;font-size:${c.q.length>180?17:21}px">${esc(c.q)}</div><div id="opts">${c.o.map((t,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span>${esc(t)}</button>`).join('')}</div><div id="fb"></div><p class="mut kh">⌨️ Phím tắt: 1-4 hoặc A-D chọn đáp án • Enter hoặc → câu tiếp • ← câu trước</p>`;
 M.classList.add('inline');$('#mSlot').appendChild(M);
 document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(+b.dataset.k));
 $('#qBack').onclick=()=>{if(confirm('Thoát bài đang làm và về trang chủ?')){clearInterval(tmr);home()}};
@@ -695,6 +696,22 @@ async function climbHome(){const e=$('#climbTop');if(!e)return;
  const D=await clData();if(D.online||!c)paint(D)}
 document.addEventListener('click',e=>{if(e.target.closest('#clLb'))clBoard()});
 
+/* ===== PHÍM TẮT: 1-4 / A-D chọn đáp án, Enter hoặc → câu tiếp, ← câu trước ===== */
+document.addEventListener('keydown',e=>{
+ if(e.ctrlKey||e.altKey||e.metaKey||e.isComposing)return;
+ const t=e.target,tag=t&&t.tagName;
+ if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||(t&&t.isContentEditable))return;
+ const qz=$('#quiz');if(!qz||qz.classList.contains('hide')||!Array.isArray(Q)||!Q[i])return;
+ const md=$('#modal');if(md&&!md.classList.contains('hide'))return;
+ if(typeof ckM!=='undefined'&&ckM&&!ckM.classList.contains('hide'))return;
+ const k=e.key;let n=-1;
+ if(/^[1-4]$/.test(k))n=+k-1;else if(/^[a-dA-D]$/.test(k))n='abcd'.indexOf(k.toLowerCase());
+ if(n>=0){if(n<Q[i].o.length&&!locked){e.preventDefault();pick(n)}return}
+ if(k==='Enter'||k==='ArrowRight'){
+  if(k==='Enter'&&tag==='BUTTON')return;
+  const nx=$('#nx');if(nx){e.preventDefault();nx.click()}return}
+ if(k==='ArrowLeft'&&i>0){e.preventDefault();ckGo(i-1)}
+});
 home();syncMusic();
 </script>
 <script>(function(){const U={laptop:'./chuyen-mon.html',boat:'./nghi-quyet.html',lantern:'./tai-lieu-on-tap.html'};
