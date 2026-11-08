@@ -432,8 +432,8 @@ const catOf=b=>CATS[b.c]?b.c:'other',catShort=b=>CATS[catOf(b)].split(' –')[0]
 const ONK='sq_nq_on_done';let onDone=ld(ONK,{}),pendingOn=null,curOnId=null;
 const catPool=v=>v==='all'?bank:v.slice(0,2)==='t:'?bank.filter(b=>b.t===v.slice(2)):bank.filter(b=>catOf(b)===v);
 const onSets=(v,N)=>{const o=[];if(N<=50){o.push([0,N,v+'|0-'+N+'|'+N]);return o}const g=Math.ceil(N/50),z=Math.ceil(N/g);for(let s=0;s<N;s+=z){const e=Math.min(s+z,N);o.push([s,e,v+'|'+s+'-'+e+'|'+N])}return o};
-const QDP=[['nq','Nội quy lao động'],['mt','TB cấm sử dụng ma túy'],['an','An ninh bảo mật'],['tt','QĐ hoạt động trên PTTT'],['kh','Khác']];
-const qdKey=b=>{const t=b.t||'';if(t==='Nội quy Lao động')return'nq';if(t==='Nghiêm cấm Ma túy')return'mt';if(t==='ANBM')return'an';if(t==='Truyền thông')return'tt';if(t==='LMS'){const x=b.q+' '+b.o.join(' ')+' '+(b.e||'');if(/PTTT|mạng xã hội/i.test(x))return'tt';if(/ANBM|ANTT|bảo mật/i.test(x))return'an';return'nq'}return'kh'};
+const QDP=[['nl','Nội quy lao động · L (nhóm lỗi L1–L5)'],['nq','Nội quy lao động · Các mục còn lại'],['mt','TB cấm sử dụng ma túy'],['an','An ninh bảo mật'],['tt','QĐ hoạt động trên PTTT'],['kh','Khác']];
+const qdKey=b=>{const k=qdKey0(b);if(k!=='nq')return k;const x=b.q+' '+b.o.join(' ')+' '+(b.e||'');return /\bL[1-5]\b|lỗi/i.test(x)?'nl':'nq'},qdKey0=b=>{const t=b.t||'';if(t==='Nội quy Lao động')return'nq';if(t==='Nghiêm cấm Ma túy')return'mt';if(t==='ANBM')return'an';if(t==='Truyền thông')return'tt';if(t==='LMS'){const x=b.q+' '+b.o.join(' ')+' '+(b.e||'');if(/PTTT|mạng xã hội/i.test(x))return'tt';if(/ANBM|ANTT|bảo mật/i.test(x))return'an';return'nq'}return'kh'};
 const onUnits=v=>{const P=catPool(v);if(v==='qd'&&P.length>50){const u=QDP.map(q=>[q[1],P.filter(b=>qdKey(b)===q[0]),v+'~'+q[0]]).filter(x=>x[1].length);if(u.length>1)return u}return[[null,P,v]]};
 const unitDone=u=>{const N=u[1].length;return N>0&&(onSets(u[2],N).every(x=>onDone[x[2]])||(N>50&&!!onDone[u[2]+'|tot|'+N]))};
 const catDone=v=>{const N=catPool(v).length;return N>0&&((N>50&&!!onDone[v+'|tot|'+N])||onUnits(v).every(unitDone))};
