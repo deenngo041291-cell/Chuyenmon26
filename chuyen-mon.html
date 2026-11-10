@@ -140,7 +140,8 @@ main{padding-top:58px!important}
 .pbtn{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:12px 14px;font:inherit;font-weight:700;text-align:left;cursor:pointer;animation:dIn .35s both}
 .pbtn:hover{border-color:#ffb300}
 @media (max-width:520px){.disc.d3{grid-template-columns:repeat(3,1fr);gap:8px}.d3 .dbtn{padding:12px 4px}.d3 .dbtn .di{font-size:32px}.d3 .dbtn b{font-size:13px}.d3 .dbtn small{font-size:11px}}
-.rvM{text-align:center}.rvM img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--line);animation:rvsk .55s}.rvM h2{margin:10px 0 4px}.rvM p{margin:0 0 4px}@keyframes rvsk{20%{transform:rotate(-12deg) scale(1.1)}40%{transform:rotate(10deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}@media(prefers-reduced-motion:reduce){.rvM img{animation:none}}</style>
+.rvM{text-align:center}.rvM img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid var(--line);animation:rvsk .55s}.rvM h2{margin:10px 0 4px}.rvM p{margin:0 0 4px}@keyframes rvsk{20%{transform:rotate(-12deg) scale(1.1)}40%{transform:rotate(10deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}@media(prefers-reduced-motion:reduce){.rvM img{animation:none}}.kh{font-size:12px;text-align:center;margin:10px 0 0}@media (hover:none){.kh{display:none}}
+</style>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8C%BB%3C/text%3E%3C/svg%3E">
 <style id="ck-css">
 .ckp{position:fixed;z-index:7;top:calc(10px + env(safe-area-inset-top,0px));right:10px;padding:8px 14px;font-size:15px;border-radius:14px}
@@ -406,7 +407,7 @@ function home(){fillHome();discUi();$('#best').textContent=bestScore?'🏆 Đi�
 let Q,i,score,streak,maxStreak,wrong,locked,tl,tmr,wr=0;
 $('#bStart').onclick=()=>{syncMusic();Q=shuf(pool()).slice(0,30).map(b=>{const idx=b.ns?b.o.map((_,k)=>k):shuf(b.o.map((_,k)=>k));return{q:b.q,o:idx.map(k=>b.o[k]),a:idx.indexOf(b.a),e:b.e,r:b}});i=0;wr=0;score=0;streak=0;maxStreak=0;wrong=[];ckInit();show('quiz');say(R(M_START),'cheer');render()};
 function render(){clearInterval(tmr);locked=false;if(i>0)say(R(M_THINK),'think');const c=Q[i];const L='ABCD';
-const M=$('.mascot');document.body.appendChild(M);M.classList.remove('inline');$('#quiz').innerHTML=`<div class="hud"><button type="button" class="sm sec" id="qBack">🏠 Trang chủ</button><span>Câu ${i+1}/${Q.length}</span><span id="tm"></span><span>⭐ ${score} &nbsp; 🔥 ${streak}</span></div><div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div class="q" style="white-space:pre-line;font-size:${c.q.length>180?17:21}px">${esc(c.q)}</div><div id="opts">${c.o.map((t,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span>${esc(t)}</button>`).join('')}</div><div id="mSlot"></div><div id="fb"></div>`;M.classList.add('inline');$('#mSlot').appendChild(M);
+const M=$('.mascot');document.body.appendChild(M);M.classList.remove('inline');$('#quiz').innerHTML=`<div class="hud"><button type="button" class="sm sec" id="qBack">🏠 Trang chủ</button><span>Câu ${i+1}/${Q.length}</span><span id="tm"></span><span>⭐ ${score} &nbsp; 🔥 ${streak}</span></div><div class="bar"><div style="width:${i/Q.length*100}%"></div></div><div class="q" style="white-space:pre-line;font-size:${c.q.length>180?17:21}px">${esc(c.q)}</div><div id="opts">${c.o.map((t,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span>${esc(t)}</button>`).join('')}</div><div id="mSlot"></div><div id="fb"></div><p class="mut kh">⌨️ Phím tắt: 1-4 hoặc A-D chọn đáp án • Enter hoặc → câu tiếp • ← câu trước</p>`;M.classList.add('inline');$('#mSlot').appendChild(M);
 document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(+b.dataset.k));
 $('#qBack').onclick=()=>{if(confirm('Thoát bài đang làm và về trang chủ?')){clearInterval(tmr);home()}};
 if(set.timer&&ans[i]===undefined){tl=30;tick();tmr=setInterval(()=>{tl--;tick();if(tl<=0){clearInterval(tmr);pick(-1)}},1000)}ckAfterRender()}
@@ -515,6 +516,23 @@ ckB.onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.datase
 ckM.onclick=e=>{if(e.target===ckM)ckClose()};
 ckP.onclick=()=>ckOpen();
 document.addEventListener('keydown',e=>{if(e.key==='Escape')ckClose()});
+
+/* ===== PHÍM TẮT: 1-4 / A-D chọn đáp án, Enter hoặc → câu tiếp, ← câu trước ===== */
+document.addEventListener('keydown',e=>{
+ if(e.ctrlKey||e.altKey||e.metaKey||e.isComposing)return;
+ const t=e.target,tag=t&&t.tagName;
+ if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT'||(t&&t.isContentEditable))return;
+ const qz=$('#quiz');if(!qz||qz.classList.contains('hide')||!Array.isArray(Q)||!Q[i])return;
+ const md=$('#modal');if(md&&!md.classList.contains('hide'))return;
+ if(typeof ckM!=='undefined'&&ckM&&!ckM.classList.contains('hide'))return;
+ const k=e.key;let n=-1;
+ if(/^[1-4]$/.test(k))n=+k-1;else if(/^[a-dA-D]$/.test(k))n='abcd'.indexOf(k.toLowerCase());
+ if(n>=0){if(n<Q[i].o.length&&!locked){e.preventDefault();pick(n)}return}
+ if(k==='Enter'||k==='ArrowRight'){
+  if(k==='Enter'&&tag==='BUTTON')return;
+  const nx=$('#nx');if(nx){e.preventDefault();nx.click()}return}
+ if(k==='ArrowLeft'&&i>0){e.preventDefault();ckGo(i-1)}
+});
 function ckGo(n){i=n;ckClose();render();window.scrollTo(0,0)}
 function ckRecalc(){score=0;wrong=[];streak=0;maxStreak=0;let run=0;
  Q.forEach((c,n)=>{const k=ans[n];if(k===undefined)return;
